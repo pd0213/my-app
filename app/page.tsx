@@ -1,11 +1,17 @@
 "use client";
 import { useState } from "react";
 
+type HistoryItem = {
+  prompt: string;
+  image: string;
+};
+
 export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   async function generate() {
     if (!prompt.trim()) {
@@ -28,6 +34,7 @@ export default function Home() {
       setError(data.error);
     } else {
       setImage(data.image);
+      setHistory((prev) => [{ prompt, image: data.image }, ...prev]);
     }
 
     setLoading(false);
@@ -55,9 +62,7 @@ export default function Home() {
         </button>
       </div>
 
-      {error && (
-        <p className="text-red-400 mt-4">{error}</p>
-      )}
+      {error && <p className="text-red-400 mt-4">{error}</p>}
 
       {loading && (
         <p className="text-gray-400 mt-10 animate-pulse">画像を生成しています...</p>
@@ -65,11 +70,7 @@ export default function Home() {
 
       {image && (
         <div className="mt-10 w-full max-w-xl">
-          <img
-            src={image}
-            alt="generated"
-            className="rounded-xl w-full shadow-2xl"
-          />
+          <img src={image} alt="generated" className="rounded-xl w-full shadow-2xl" />
           <a
             href={image}
             download="generated.png"
@@ -77,6 +78,29 @@ export default function Home() {
           >
             ダウンロード
           </a>
+        </div>
+      )}
+
+      {history.length > 1 && (
+        <div className="mt-20 w-full max-w-4xl">
+          <h2 className="text-2xl font-bold mb-6">生成履歴</h2>
+          <div className="grid grid-cols-2 gap-6">
+            {history.slice(1).map((item, i) => (
+              <div key={i} className="bg-gray-900 rounded-xl overflow-hidden">
+                <img src={item.image} alt={item.prompt} className="w-full" />
+                <div className="p-4">
+                  <p className="text-gray-400 text-sm">{item.prompt}</p>
+                  <a
+                    href={item.image}
+                    download={`generated-${i}.png`}
+                    className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    ダウンロード
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </main>
