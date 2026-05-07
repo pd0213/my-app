@@ -64,11 +64,20 @@ export default function Home() {
       )}
 
       {image && (
-        <img
-          src={image}
-          alt="generated"
-          className="mt-10 rounded-xl max-w-xl w-full shadow-2xl"
-        />
+        <div className="mt-10 w-full max-w-xl">
+          <img
+            src={image}
+            alt="generated"
+            className="rounded-xl w-full shadow-2xl"
+          />
+          <a
+            href={image}
+            download="generated.png"
+            className="mt-4 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
+          >
+            ダウンロード
+          </a>
+        </div>
       )}
     </main>
   );
